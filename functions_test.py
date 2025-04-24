@@ -167,40 +167,51 @@ def select_ions():
         return []
 
 
-def run_gmx_command(command, input_files=None, output_files=None, input_data=None):
+def run_gmx_command(command, input_data=None):
     """
-    Executes a GROMACS command.
+    Runs a GROMACS command using subprocess.Popen and handles errors.
 
     Args:
         command (list): The GROMACS command as a list of strings.
-        input_files (dict, optional): Dictionary of input files (e.g., {'-f': 'input.mdp'}).
-        output_files (dict, optional): Dictionary of output files (e.g., {'-o': 'output.gro'}).
-        input_data (str, optional): Data to pipe into the command's stdin.
+        input_data (str, optional):  Data to pass to the stdin of the command.
+            Defaults to None.
 
     Returns:
-        tuple: (stdout, stderr, returncode)
+        tuple: (stdout, stderr, returncode).  stdout and stderr are strings,
+               returncode is an integer.
     """
-    full_command = ['gmx', *command]
+    try:
+        # Ensure command is a list of strings
+        if not isinstance(command, list):
+            raise TypeError("command must be a list of strings")
 
-    if input_files:
-        full_command.extend(
-            [key, value] for key, value in input_files.items()
-        )  # Add input file flags
-    if output_files:
-        full_command.extend(
-            [key, value] for key, value in output_files.items()
-        )  # Add output file flags
+        process = subprocess.Popen(
+            command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,  #  Ensures that stdout and stderr are returned as strings
+        )
+        stdout, stderr = process.communicate(input=input_data)
+        returncode = process.returncode
 
-    process = subprocess.Popen(
-        full_command,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    stdout, stderr = process.communicate(input=input_data)
+        if returncode != 0:
+            print(f"Error running command: {command}")
+            print(f"Return code: {returncode}")
+            print(f"Stdout: {stdout}")
+            print(f"Stderr: {stderr}")
+            # Consider raising an exception here for better error handling
+            # raise RuntimeError(f"GROMACS command failed: {stderr}")
 
-    return stdout, stderr, process.returncode
+        return stdout, stderr, returncode
+
+    except FileNotFoundError:
+        print(f"Error: GROMACS command not found: {command[0]}")
+        exit()
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        exit()
+
 
 
 def pdb2gmx(pdb_file, top_file):
