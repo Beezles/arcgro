@@ -59,6 +59,7 @@ def select_pdb(workdir):
     answers = inquirer.prompt(questions)
     if answers:
         file_loc = os.path.join(protein_dir, answers['file'])
+        print file_loc
         return file_loc
     else:
         exit()
