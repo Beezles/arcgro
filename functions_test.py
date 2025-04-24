@@ -53,7 +53,7 @@ def select_pdb(workdir):
             'file',
             message="Select the .pdb file from the Proteins folder",
             choices=read_sel,
-            validate=lambda _, x: ex_con(x),
+            #validate=lambda _, x: ex_con(x),
         ),
     ]
     answers = inquirer.prompt(questions)
