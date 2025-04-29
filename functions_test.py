@@ -130,7 +130,7 @@ def select_topology(workdir):
             if answers:
                 project_type = answers['project_type']
                 topology_settings = {  # Define topologies here
-                    'Thermal simulations': 'OPLS-AA/L',
+                    'Thermal simulations': 'oplsaa',
                     'Ligand binding simulations': 'CHARMM27',
                     'Nucleic acids binding simulation': 'AMBER96',
                 }
