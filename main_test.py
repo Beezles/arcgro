@@ -14,7 +14,7 @@ if file:
             else top_choice[1]
         )  # Get the topology file name
         ion_choice = select_ions()
-
+        
         # Run the GROMACS pipeline
         gro_file, top_file = pdb2gmx(file, top_file)
         gro_file, top_file = solvate(gro_file, top_file)

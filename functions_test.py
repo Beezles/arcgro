@@ -196,39 +196,82 @@ def select_ions():
     else:
         return []
 
-
 def run_gmx_command(command, input_files=None, output_files=None, input_data=None):
     """
     Executes a GROMACS command.
-
-    Args:
-        command (list): The GROMACS command as a list of strings.
-        input_files (dict, optional): Dictionary of input files (e.g., {'-f': 'input.mdp'}).
-        output_files (dict, optional): Dictionary of output files (e.g., {'-o': 'output.gro'}).
-        input_data (str, optional): Data to pipe into the command's stdin.
-
-    Returns:
-        tuple: (stdout, stderr, returncode)
+    ... (docstring) ...
     """
-    full_command = ['gmx', *command]
+    # --- Make sure 'gmx' is the first element ---
+    if command[0] != 'gmx':
+         full_command = ['gmx'] + command
+    else:
+         full_command = command # If 'gmx' is already included
 
+    # --- Flatten input/output file args ---
+    cmd_args = []
     if input_files:
-        for key, value in input_files.items():
-            full_command.extend([key, value])
+         for key, value in input_files.items():
+             cmd_args.extend([key, value])
     if output_files:
-        for key, value in output_files.items():
-            full_command.extend([key, value])
+         for key, value in output_files.items():
+             cmd_args.extend([key, value])
 
+    full_command.extend(cmd_args) # Add file args
+
+    # --- Add this env=os.environ.copy() part ---
     process = subprocess.Popen(
         full_command,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
+        env=os.environ.copy() # Pass a copy of the current environment
     )
     stdout, stderr = process.communicate(input=input_data)
 
+        # Print command for debugging
+    print(f"Running command: {' '.join(full_command)}")
+    if returncode != 0:
+         print(f"STDOUT:\n{stdout}") # Print stdout on error too
+         print(f"STDERR:\n{stderr}") # Print stderr on error
+         
     return stdout, stderr, process.returncode
+
+#TESTING A VARIATION OF THIS FUNCTION FOR TROUBLESHOOTING.
+#IF SUCCESSFUL, DELETE THIS BLOCK FOR REPLACEMENT.
+#FIX ME
+# def run_gmx_command(command, input_files=None, output_files=None, input_data=None):
+#     """
+#     Executes a GROMACS command.
+
+#     Args:
+#         command (list): The GROMACS command as a list of strings.
+#         input_files (dict, optional): Dictionary of input files (e.g., {'-f': 'input.mdp'}).
+#         output_files (dict, optional): Dictionary of output files (e.g., {'-o': 'output.gro'}).
+#         input_data (str, optional): Data to pipe into the command's stdin.
+
+#     Returns:
+#         tuple: (stdout, stderr, returncode)
+#     """
+#     full_command = ['gmx', *command]
+
+#     if input_files:
+#         for key, value in input_files.items():
+#             full_command.extend([key, value])
+#     if output_files:
+#         for key, value in output_files.items():
+#             full_command.extend([key, value])
+
+#     process = subprocess.Popen(
+#         full_command,
+#         stdin=subprocess.PIPE,
+#         stdout=subprocess.PIPE,
+#         stderr=subprocess.PIPE,
+#         text=True,
+#     )
+#     stdout, stderr = process.communicate(input=input_data)
+
+#     return stdout, stderr, process.returncode
 
 def pdb2gmx(pdb_file, top_file):
     """Runs pdb2gmx to generate .gro and .top files."""
