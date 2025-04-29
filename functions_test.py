@@ -131,8 +131,8 @@ def select_topology(workdir):
                 project_type = answers['project_type']
                 topology_settings = {  # Define topologies here
                     'Thermal simulations': 'oplsaa',
-                    'Ligand binding simulations': 'CHARMM27',
-                    'Nucleic acids binding simulation': 'AMBER96',
+                    'Ligand binding simulations': 'charmm27',
+                    'Nucleic acids binding simulation': 'amber96',
                 }
                 if project_type in topology_settings:
                     return ('Auto', topology_settings[project_type])  # Return 'Auto' and the topology
@@ -140,7 +140,15 @@ def select_topology(workdir):
                     exit()
         elif top_choice == 'Customize':
             top_dir = os.path.join(workdir, "Topology")
+            sys_top = os.path(/apps/gromacs/2022.4/share/gromacs/top)
             try:
+                sys_files = [
+                    f
+                    for f in os.listdir(sys_top)
+                    if f.endswith(
+                        ".ff"
+                    )
+                ]
                 top_files = [
                     f
                     for f in os.listdir(top_dir)
@@ -150,7 +158,7 @@ def select_topology(workdir):
                 ]  # or other topology file extensions
             except FileNotFoundError:
                 print(
-                    "Topology folder not found. Please create a 'Topology' folder in the working directory."
+                    "Topology folder not found in system or current directory. Please create a 'Topology' folder in the working directory."
                 )
                 exit()
             except NotADirectoryError:
