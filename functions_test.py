@@ -309,9 +309,16 @@ def solvate(gro_file, top_file):
         print(f"Error in solvate: {stderr}")
         exit()
     return 'solvated.gro', 'topol.top'
+    
+# Run grompp to create .tpr file
+def pgenion(gro_file, top_file):
+    run_gmx_command(
+        ['grompp', '-f', 'ions.mdp', '-c', gro_file, '-p', top_file, '-o', 'ions.tpr']
+    )
+    return 'ions.tpr', 'topol.top'
 
 #gmx genion -s ions.tpr -o test_underscore_ions.gro -p topol.top -pname
-def genion(gro_file, top_file, ion_choice):
+def genion(ions_tpr, top_file, ion_choice):
     """Runs genion to add ions to neutralize the system."""
     output_files = {'-o': 'ionized.gro', '-p': 'topol.top'}
     input_files = {'-s': 'ions.tpr'}
@@ -378,11 +385,6 @@ dispcorr                 = EnerPres
 gen_vel                  = no
 """
         )  # Basic EM parameters
-    # Run grompp to create .tpr file
-    run_gmx_command(
-        ['grompp', '-f', 'em.mdp', '-c', gro_file, '-p', top_file, '-o', 'em.tpr']
-    )
-
     # Run energy minimization
     output_files = {'-o': 'em.gro'}
     input_files = {'-s': 'em.tpr'}
