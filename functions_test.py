@@ -230,10 +230,10 @@ def run_gmx_command(command, input_files=None, output_files=None, input_data=Non
     stdout, stderr = process.communicate(input=input_data)
 
         # Print command for debugging
-    print(f"Running command: {' '.join(full_command)}")
-    if returncode != 0:
-         print(f"STDOUT:\n{stdout}") # Print stdout on error too
-         print(f"STDERR:\n{stderr}") # Print stderr on error
+    #print(f"Running command: {' '.join(full_command)}")
+    #if returncode != 0:
+     #    print(f"STDOUT:\n{stdout}") # Print stdout on error too
+      #   print(f"STDERR:\n{stderr}") # Print stderr on error
          
     return stdout, stderr, process.returncode
 
