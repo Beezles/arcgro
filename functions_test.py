@@ -213,13 +213,11 @@ def run_gmx_command(command, input_files=None, output_files=None, input_data=Non
     full_command = ['gmx', *command]
 
     if input_files:
-        full_command.extend(
-            [key, value] for key, value in input_files.items()
-        )  # Add input file flags
+        for key, value in input_files.items():
+            full_command.extend([key, value])
     if output_files:
-        full_command.extend(
-            [key, value] for key, value in output_files.items()
-        )  # Add output file flags
+        for key, value in output_files.items():
+            full_command.extend([key, value])
 
     process = subprocess.Popen(
         full_command,
@@ -231,7 +229,6 @@ def run_gmx_command(command, input_files=None, output_files=None, input_data=Non
     stdout, stderr = process.communicate(input=input_data)
 
     return stdout, stderr, process.returncode
-
 
 def pdb2gmx(pdb_file, top_file):
     """Runs pdb2gmx to generate .gro and .top files."""
