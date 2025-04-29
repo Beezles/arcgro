@@ -2,6 +2,7 @@ import os
 from functions_test import * # Import the updated functions
 
 workDir = os.getcwd()
+check_gromacs_availability()
 file = select_pdb(workDir)
 if file:
     top_choice = select_topology(workDir)
@@ -20,10 +21,8 @@ if file:
         gro_file, top_file = energy_minimization(gro_file, top_file)
 
         # Get temperature and pressure for equilibration
-        temp_input = inquirer.prompt(
-            [inquirer.Text('temp', message="Enter the temperature (K)", validate=validate_num)])['temp']
-        pressure_input = inquirer.prompt(
-            [inquirer.Text('pressure', message="Enter the pressure (atm)", validate=validate_num)])['pressure']
+        temp_input = inquirer.prompt([inquirer.Text('temp', message="Enter the temperature (K)", validate=validate_num)])['temp']
+        pressure_input = inquirer.prompt([inquirer.Text('pressure', message="Enter the pressure (atm)", validate=validate_num)])['pressure']
 
         gro_file, top_file = nvt_equilibration(gro_file, top_file, temp_input)
         gro_file, top_file = npt_equilibration(gro_file, top_file, temp_input, pressure_input)
@@ -32,4 +31,8 @@ if file:
         trajectory_file = md_simulation(gro_file, top_file)
 
         # Analysis and Graphing
-        result_graphs(trajectory_file)
+        result_graphs(trajectory_file)  # Generate graphs
+
+else:
+    print('No .pdb file selected. Exiting.')
+    exit()

@@ -5,7 +5,37 @@ import subprocess  # For running GROMACS commands
 
 answers = None
 
+def check_gromacs_availability():
+    """
+    Checks if GROMACS is accessible and sets it up if possible.
+    If GROMACS is not found, the program exits.
+    """
 
+    try:
+        # Try running a simple gmx command
+        subprocess.run(['gmx', '-v'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("GROMACS is accessible.")
+        return  # GROMACS is already working
+
+    except FileNotFoundError:
+        print("GROMACS not found in PATH.")
+        # Attempt to load gromacs module (if on ARC)
+        try:
+            subprocess.run(['module', 'load', 'gromacs/2022.4'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print("GROMACS module loaded successfully.")
+            # Verify if gmx is now accessible
+            subprocess.run(['gmx', '-v'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return
+        except FileNotFoundError:
+            print("Module command not found. Ensure Environment Modules or Lmod is available.")
+        except subprocess.CalledProcessError:
+            print("Failed to load gromacs module. Ensure the module name is correct and the module system is working.")
+
+        print("GROMACS is not accessible. Please ensure it is installed and available in your environment.")
+        sys.exit(1)  # Exit the program
+
+#FIX ME
+#not working rn for whatever reason. Does not display exit text but an extra option does appear in inquirer. does not exit if the blank option where exit is supposed to be is pressed. The worst issue is, for whatever reason, including this into inquirer via lambda function results in whatever input the user chooses being invalid. ie choosing a valid .pdb file results in the program saying "x.pdb is not a valid .pdb file" with no way to exit.
 def ex_con(temp_str):
     """Exit program if 'Exit' is in the input."""
     if 'Exit' in temp_str:
@@ -53,13 +83,12 @@ def select_pdb(workdir):
             'file',
             message="Select the .pdb file from the Proteins folder",
             choices=read_sel,
-            #validate=lambda _, x: ex_con(x),
+            validate=lambda _, x: ex_con(x),
         ),
     ]
     answers = inquirer.prompt(questions)
     if answers:
         file_loc = os.path.join(protein_dir, answers['file'])
-        print(file_loc)
         return file_loc
     else:
         exit()
@@ -75,7 +104,7 @@ def select_topology(workdir):
             message='Would you like the program to automatically configure the topology based off the project, or would you like to customize?',
             choices=['Auto', 'Customize', 'Exit'],
             default='Auto',
-            #validate=lambda _, x: ex_con(x),
+            validate=lambda _, x: ex_con(x),
         ),
     ]
     answers = inquirer.prompt(questions)
@@ -93,7 +122,7 @@ def select_topology(workdir):
                         'Nucleic acids binding simulation',
                         'Exit',
                     ],
-                    #validate=lambda _, x: ex_con(x),
+                    validate=lambda _, x: ex_con(x),
                 ),
             ]
             answers = inquirer.prompt(questions)
@@ -136,7 +165,7 @@ def select_topology(workdir):
                     'custom_topology',
                     message="Choose the force field:",
                     choices=top_files + ['Exit'],
-                    #validate=lambda _, x: ex_con(x),
+                    validate=lambda _, x: ex_con(x),
                 ),
             ]
             answers = inquirer.prompt(questions)
@@ -183,11 +212,13 @@ def run_gmx_command(command, input_files=None, output_files=None, input_data=Non
     full_command = ['gmx', *command]
 
     if input_files:
-        for key, value in input_files.items():
-            full_command.extend([key, value])
+        full_command.extend(
+            [key, value] for key, value in input_files.items()
+        )  # Add input file flags
     if output_files:
-        for key, value in output_files.items():
-            full_command.extend([key, value])
+        full_command.extend(
+            [key, value] for key, value in output_files.items()
+        )  # Add output file flags
 
     process = subprocess.Popen(
         full_command,
@@ -199,7 +230,6 @@ def run_gmx_command(command, input_files=None, output_files=None, input_data=Non
     stdout, stderr = process.communicate(input=input_data)
 
     return stdout, stderr, process.returncode
-
 
 
 def pdb2gmx(pdb_file, top_file):
