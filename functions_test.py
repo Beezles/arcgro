@@ -273,6 +273,7 @@ def run_gmx_command(command, input_files=None, output_files=None, input_data=Non
 
 #     return stdout, stderr, process.returncode
 
+#gmx pdb2gmx -f 1f6s .pdb -o test.gro -ignh
 def pdb2gmx(pdb_file, top_file):
     """Runs pdb2gmx to generate .gro and .top files."""
 
@@ -290,7 +291,7 @@ def pdb2gmx(pdb_file, top_file):
     return 'protein.gro', 'topol.top'
 
 
-
+#gmx solvate -cp test_newbox.gro -cs spc216.gro -o test_solvate.gro -p topol.top
 def solvate(gro_file, top_file):
     """Runs solvate to add water to the system."""
     # Create a box
@@ -309,11 +310,11 @@ def solvate(gro_file, top_file):
         exit()
     return 'solvated.gro', 'topol.top'
 
-
+#gmx genion -s ions.tpr -o test_underscore_ions.gro -p topol.top -pname
 def genion(gro_file, top_file, ion_choice):
     """Runs genion to add ions to neutralize the system."""
     output_files = {'-o': 'ionized.gro', '-p': 'topol.top'}
-    input_files = {'-p': top_file, '-s': 'solvated.gro'}
+    input_files = {'-s': 'ions.tpr'}
     command = ['genion', '-conc', '0.1']  # Example: 0.1 M ion concentration
     if 'Na+' in ion_choice:
         command.extend(['-pname', 'NA', '-nname', 'CL'])
@@ -377,7 +378,6 @@ dispcorr                 = EnerPres
 gen_vel                  = no
 """
         )  # Basic EM parameters
-
     # Run grompp to create .tpr file
     run_gmx_command(
         ['grompp', '-f', 'em.mdp', '-c', gro_file, '-p', top_file, '-o', 'em.tpr']
