@@ -84,7 +84,7 @@ def select_pdb(workdir):
             'file',
             message="Select the .pdb file from the Proteins folder",
             choices=read_sel,
-            validate=lambda _, x: ex_con(x),
+            #validate=lambda _, x: ex_con(x),
         ),
     ]
     answers = inquirer.prompt(questions)
@@ -105,7 +105,7 @@ def select_topology(workdir):
             message='Would you like the program to automatically configure the topology based off the project, or would you like to customize?',
             choices=['Auto', 'Customize', 'Exit'],
             default='Auto',
-            validate=lambda _, x: ex_con(x),
+            #validate=lambda _, x: ex_con(x),
         ),
     ]
     answers = inquirer.prompt(questions)
@@ -123,7 +123,7 @@ def select_topology(workdir):
                         'Nucleic acids binding simulation',
                         'Exit',
                     ],
-                    validate=lambda _, x: ex_con(x),
+                    #validate=lambda _, x: ex_con(x),
                 ),
             ]
             answers = inquirer.prompt(questions)
@@ -166,7 +166,7 @@ def select_topology(workdir):
                     'custom_topology',
                     message="Choose the force field:",
                     choices=top_files + ['Exit'],
-                    validate=lambda _, x: ex_con(x),
+                    #validate=lambda _, x: ex_con(x),
                 ),
             ]
             answers = inquirer.prompt(questions)
