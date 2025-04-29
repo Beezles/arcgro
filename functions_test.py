@@ -5,34 +5,35 @@ import subprocess  # For running GROMACS commands
 
 answers = None
 
-def check_gromacs_availability():
-    """
-    Checks if GROMACS is accessible and sets it up if possible.
-    If GROMACS is not found, the program exits.
-    """
-
-    try:
-        # Try running a simple gmx command
-        subprocess.run(['gmx', '-v'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print("GROMACS is accessible.")
-        return  # GROMACS is already working
-
-    except FileNotFoundError:
-        print("GROMACS not found in PATH.")
-        # Attempt to load gromacs module (if on ARC)
-        try:
-            subprocess.run(['module', 'load', 'gromacs/2022.4'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print("GROMACS module loaded successfully.")
-            # Verify if gmx is now accessible
-            subprocess.run(['gmx', '-v'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return
-        except FileNotFoundError:
-            print("Module command not found. Ensure Environment Modules or Lmod is available.")
-        except subprocess.CalledProcessError:
-            print("Failed to load gromacs module. Ensure the module name is correct and the module system is working.")
-
-        print("GROMACS is not accessible. Please ensure it is installed and available in your environment.")
-        sys.exit(1)  # Exit the program
+#POTENTIALLY NOT WORKING, FIX ME
+#def check_gromacs_availability():
+#    """
+#    Checks if GROMACS is accessible and sets it up if possible.
+#    If GROMACS is not found, the program exits.
+#    """
+#
+#    try:
+#        # Try running a simple gmx command
+#        subprocess.run(['gmx', '-v'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+#        print("GROMACS is accessible.")
+#        return  # GROMACS is already working
+#
+#    except FileNotFoundError:
+#        print("GROMACS not found in PATH.")
+#        # Attempt to load gromacs module (if on ARC)
+#        try:
+#            subprocess.run(['module', 'load', 'gromacs/2022.4'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+#            print("GROMACS module loaded successfully.")
+#            # Verify if gmx is now accessible
+#            subprocess.run(['gmx', '-v'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+#            return
+#        except FileNotFoundError:
+#            print("Module command not found. Ensure Environment Modules or Lmod is available.")
+#        except subprocess.CalledProcessError:
+#            print("Failed to load gromacs module. Ensure the module name is correct and the module system is working.")
+#
+#        print("GROMACS is not accessible. Please ensure it is installed and available in your environment.")
+#        sys.exit(1)  # Exit the program
 
 #FIX ME
 #not working rn for whatever reason. Does not display exit text but an extra option does appear in inquirer. does not exit if the blank option where exit is supposed to be is pressed. The worst issue is, for whatever reason, including this into inquirer via lambda function results in whatever input the user chooses being invalid. ie choosing a valid .pdb file results in the program saying "x.pdb is not a valid .pdb file" with no way to exit.
