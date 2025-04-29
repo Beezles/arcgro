@@ -2,7 +2,8 @@ import os
 from functions_test import * # Import the updated functions
 
 workDir = os.getcwd()
-check_gromacs_availability()
+#POTENTIALLY NOT WORKING? FIX ME
+#check_gromacs_availability()
 file = select_pdb(workDir)
 if file:
     top_choice = select_topology(workDir)
