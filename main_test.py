@@ -16,20 +16,21 @@ if file:
         ion_choice = select_ions()
         
         # Run the GROMACS pipeline
-        gro_file, top_file = pdb2gmx(file, top_file)
-        gro_file, top_file = solvate(gro_file, top_file)
-        gro_file, top_file = genion(gro_file, top_file, ion_choice)
-        gro_file, top_file = energy_minimization(gro_file, top_file)
+        protein_gro_file, top_file = pdb2gmx(file, top_file)
+        solvated_gro_file, top_file = solvate(gro_file, top_file)
+        ions_tpr, top_file = pgenion(gro_file, top_file)
+        ionized_gro_file, top_file = genion(gro_file, top_file, ion_choice)
+        em_gro_file, top_file = energy_minimization(gro_file, top_file)
 
         # Get temperature and pressure for equilibration
         temp_input = inquirer.prompt([inquirer.Text('temp', message="Enter the temperature (K)", validate=validate_num)])['temp']
         pressure_input = inquirer.prompt([inquirer.Text('pressure', message="Enter the pressure (atm)", validate=validate_num)])['pressure']
 
-        gro_file, top_file = nvt_equilibration(gro_file, top_file, temp_input)
-        gro_file, top_file = npt_equilibration(gro_file, top_file, temp_input, pressure_input)
+        nvt_gro_file, top_file = nvt_equilibration(gro_file, top_file, temp_input)
+        npt_gro_file, top_file = npt_equilibration(gro_file, top_file, temp_input, pressure_input)
 
         # Run MD simulation
-        trajectory_file = md_simulation(gro_file, top_file)
+        trajectory_file = md_simulation(nvt_gro_file, top_file)
 
         # Analysis and Graphing
         result_graphs(trajectory_file)  # Generate graphs
