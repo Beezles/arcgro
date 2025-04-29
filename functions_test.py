@@ -299,7 +299,7 @@ def solvate(gro_file, top_file):
     )  # Adjust box dimensions as needed
 
     # Solvate
-    output_files = {'-o': 'solvated.gro', '-p': 'topol.top'}
+    output_files = {'-o': 'solvated.gro'}
     input_files = {'-cp': 'box.gro', '-cs': 'spc216.gro', '-p': top_file}
     stdout, stderr, returncode = run_gmx_command(
         ['solvate'], input_files=input_files, output_files=output_files
