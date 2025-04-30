@@ -317,17 +317,15 @@ def solvate(gro_file, top_file):
         print(f"Error in solvate: {stderr}")
         exit()
     return 'solvated.gro', 'topol.top'
-    
-# Run grompp to create .tpr file
-def pgenion(gro_file, top_file):
-    run_gmx_command(
-        ['grompp', '-f', 'ions.mdp', '-c', gro_file, '-p', top_file, '-o', 'ions.tpr']
-    )
-    return 'ions.tpr', 'topol.top'
 
 #gmx genion -s ions.tpr -o test_underscore_ions.gro -p topol.top -pname
-def genion(ions_tpr, top_file, ion_choice):
+def genion(gro_file, top_file, ion_choice):
     """Runs genion to add ions to neutralize the system."""
+    # Run grompp to create .tpr file
+    #gmx grompp -f ions.mdp -c test_solvate.gro -p topol.top -o ions.tpr
+        ions_tpr, topol_file = run_gmx_command(
+            ['grompp', '-f', 'ions.mdp', '-c', gro_file, '-p', top_file, '-o', 'ions.tpr']
+    )
     output_files = {'-o': 'ionized.gro', '-p': 'topol.top'}
     input_files = {'-s': 'ions.tpr'}
     command = ['genion', '-conc', '0.1']  # Example: 0.1 M ion concentration
