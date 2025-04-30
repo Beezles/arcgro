@@ -140,7 +140,7 @@ def select_topology(workdir):
                     exit()
         elif top_choice == 'Customize':
             top_dir = os.path.join(workdir, "Topology")
-            sys_top = os.path(/apps/gromacs/2022.4/share/gromacs/top)
+            sys_top = os.path(apps/gromacs/2022.4/share/gromacs/top)
             try:
                 sys_files = [
                     f
