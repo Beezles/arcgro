@@ -17,10 +17,10 @@ if file:
         
         # Run the GROMACS pipeline
         protein_gro_file, top_file = pdb2gmx(file, top_file)
-        solvated_gro_file, top_file = solvate(gro_file, top_file)
-        ions_tpr, top_file = pgenion(gro_file, top_file)
-        ionized_gro_file, top_file = genion(gro_file, top_file, ion_choice)
-        em_gro_file, top_file = energy_minimization(gro_file, top_file)
+        solvated_gro_file, top_file = solvate(protein_gro_file, top_file)
+        ions_tpr, top_file = pgenion(solvated_gro_file, top_file)
+        ionized_gro_file, top_file = genion(ions_tpr, top_file, ion_choice)
+        em_gro_file, top_file = energy_minimization(ionized_gro_file, top_file)
 
         # Get temperature and pressure for equilibration
         temp_input = inquirer.prompt([inquirer.Text('temp', message="Enter the temperature (K)", validate=validate_num)])['temp']
