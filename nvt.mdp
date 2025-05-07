@@ -1,0 +1,46 @@
+title                    = NVT Equilibration (OPLS-AA TIP3P @ 450K)
+define                   = -DPOSRES   ; Apply position restraints on heavy atoms (protein)
+; Run parameters
+integrator               = md         ; Leap-frog integrator
+nsteps                   = 50000      ; 100 ps (50000 steps * 0.002 ps/step)
+dt                       = 0.002      ; Time step (ps)
+; Output control
+nstxout                  = 0          ; Suppress full precision trajectory output for equilibration
+nstvout                  = 0          ; Suppress velocity output
+nstfout                  = 0          ; Suppress force output
+nstcalcenergy            = 100        ; Calculate energy every 100 steps
+nstenergy                = 5000       ; Write energies to edr file every 10 ps
+nstlog                   = 5000       ; Write to log file every 10 ps
+nstxout-compressed       = 5000       ; Write compressed coordinates (xtc) every 10 ps
+; Bond parameters
+constraints              = h-bonds    ; Constrain bonds involving hydrogen atoms
+constraint_algorithm     = LINCS      ; Algorithm for constraints
+; Neighborsearching
+cutoff-scheme            = Verlet
+nstlist                  = 20         ; Update neighbor list every 40 fs
+rlist                    = 1.2
+rcoulomb                 = 1.2
+rvdw                     = 1.2
+; Electrostatics
+coulombtype              = PME
+pme_order                = 4
+fourierspacing           = 0.12
+; Van der Waals
+vdwtype                  = Cut-off
+vdw_modifier             = Force-switch
+rvdw_switch_start        = 1.0
+; Temperature coupling
+tcoupl                   = V-rescale  ; Velocity rescaling thermostat
+tc-grps                  = Protein Non-Protein ; Couple protein and solvent separately
+tau_t                    = 0.1   0.1  ; Time constant for coupling (ps)
+ref_t                    = 450   450  ; Target temperature (K)
+; Pressure coupling is off for NVT
+pcoupl                   = no
+; Periodic boundary conditions
+pbc                      = xyz
+; Velocity generation
+gen_vel                  = yes        ; Generate velocities from Maxwell distribution
+gen_temp                 = 450        ; Initial temperature for velocities (K)
+gen_seed                 = -1         ; Generate a random seed
+; Position restraints details
+refcoord_scaling         = com        ; Scale reference coords to current COM (good for POSRES)

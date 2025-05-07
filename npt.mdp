@@ -1,0 +1,46 @@
+title                    = NPT Equilibration (OPLS-AA TIP3P @ 450K)
+define                   = -DPOSRES   ; Continue with position restraints (can be removed/weakened for later NPT)
+; Run parameters
+integrator               = md
+nsteps                   = 100000     ; 200 ps (100000 steps * 0.002 ps/step)
+dt                       = 0.002
+; Output control (similar to NVT)
+nstxout                  = 0
+nstvout                  = 0
+nstfout                  = 0
+nstcalcenergy            = 100
+nstenergy                = 5000
+nstlog                   = 5000
+nstxout-compressed       = 5000
+; Bond parameters
+constraints              = h-bonds
+constraint_algorithm     = LINCS
+; Neighborsearching (same as NVT)
+cutoff-scheme            = Verlet
+nstlist                  = 20
+rlist                    = 1.2
+rcoulomb                 = 1.2
+rvdw                     = 1.2
+; Electrostatics (same as NVT)
+coulombtype              = PME
+pme_order                = 4
+fourierspacing           = 0.12
+; Van der Waals (same as NVT)
+vdwtype                  = Cut-off
+vdw_modifier             = Force-switch
+rvdw_switch_start        = 1.0
+; Temperature coupling (same as NVT)
+tcoupl                   = V-rescale
+tc-grps                  = Protein Non-Protein
+tau_t                    = 0.1   0.1
+ref_t                    = 450   450
+; Pressure coupling
+pcoupl                   = Parrinello-Rahman ; Pressure coupling
+pcoupltype               = isotropic         ; Isotropic pressure coupling
+tau_p                    = 2.0               ; Time constant for pressure coupling (ps)
+ref_p                    = 1.0               ; Target pressure (bar)
+compressibility          = 4.5e-5            ; Compressibility of water (bar^-1)
+refcoord_scaling         = com               ; if restraints are used
+; Velocity generation & Continuation
+gen_vel                  = no                ; Velocities are read from NVT state (via .cpt or .gro)
+continuation             = yes               ; Continue simulation from NVT
