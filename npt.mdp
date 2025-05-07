@@ -2,7 +2,7 @@ title                    = NPT Equilibration (OPLS-AA TIP3P @ 450K)
 define                   = -DPOSRES   ; Continue with position restraints (can be removed/weakened for later NPT)
 ; Run parameters
 integrator               = md
-nsteps                   = 100000     ; 200 ps (100000 steps * 0.002 ps/step)
+nsteps                   = 10000     ; 200 ps (100000 steps * 0.002 ps/step)
 dt                       = 0.002
 ; Output control (similar to NVT)
 nstxout                  = 0

@@ -2,7 +2,7 @@ title                    = NVT Equilibration (OPLS-AA TIP3P @ 450K)
 define                   = -DPOSRES   ; Apply position restraints on heavy atoms (protein)
 ; Run parameters
 integrator               = md         ; Leap-frog integrator
-nsteps                   = 50000      ; 100 ps (50000 steps * 0.002 ps/step)
+nsteps                   = 5000      ; 100 ps (50000 steps * 0.002 ps/step)
 dt                       = 0.002      ; Time step (ps)
 ; Output control
 nstxout                  = 0          ; Suppress full precision trajectory output for equilibration
