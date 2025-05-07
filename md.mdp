@@ -27,7 +27,7 @@ fourierspacing           = 0.12
 ; Van der Waals
 vdwtype                  = Cut-off
 vdw_modifier             = Force-switch
-rvdw_switch_start        = 1.0
+rvdw-switch-start        = 1.0
 ; Temperature coupling
 tcoupl                   = V-rescale  ; Or Nose-Hoover for production
 tc-grps                  = Protein Non-Protein
